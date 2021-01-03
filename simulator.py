@@ -65,6 +65,36 @@ def calcCombination(n, r):
     combination = calcPermutation(n, r) // math.factorial(r)
     return combination
 
+def calcProbability(open_number, hit_number, nohit_number, hit_count, denominator):
+    """
+    今回求める確率を計算する
+    probability = {open}_C_{i} * ({hit}_P_{i} * {nohit}_P_{open - i} / {deck}_P_{open})
+
+    Parameters
+    ----------
+    open_number : int
+        めくるカードの枚数
+    hit_number : int
+        当たりカードの枚数
+    nohit_number : int
+        当たりじゃないカードの枚数
+    hit_count : int
+        当選する枚数
+    denominator : int
+        計算する確率の分母
+
+    Returns
+    -------
+    probability : float
+        確率の計算結果
+    """
+    
+    combination = calcCombination(open_number, hit_count)
+    hit_permutation = calcPermutation(hit_number, hit_count)
+    nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
+    probability = combination * hit_permutation * nohit_permutation / denominator
+    return probability
+
 def roundNumber(number):
     """
     小数第2位で四捨五入した値を返す
@@ -99,13 +129,9 @@ def main():
     upper_probability = 1
     # 分母の計算
     denominator = calcPermutation(deck_number, open_number)
-    # probability_i = {open}_C_{i} * ({hit}_P_{i} * {nohit}_P_{open - i} / {deck}_P_{open})
-    # probability_upper = 1 - Σprobability_i
     for hit_count in range(upper_number):
-        combination = calcCombination(open_number, hit_count)
-        hit_permutation = calcPermutation(hit_number, hit_count)
-        nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
-        probability = combination * hit_permutation * nohit_permutation / denominator
+        probability = calcProbability(open_number, hit_number, nohit_number, hit_count, denominator)
+        # probability_upper = 1 - Σprobability_i
         upper_probability -= probability
         probability_list.append(roundNumber(probability*100))
 
