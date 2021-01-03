@@ -1,4 +1,5 @@
 import math
+from decimal import Decimal, ROUND_HALF_UP
 
 def inputNumber(prompt):
     """
@@ -64,28 +65,51 @@ def calcCombination(n, r):
     combination = calcPermutation(n, r) // math.factorial(r)
     return combination
 
+def roundNumber(number):
+    """
+    小数第2位で四捨五入した値を返す
+
+    Parameters
+    ----------
+    number : int
+        四捨五入対象の数字
+
+    Returns
+    -------
+    round_number : int
+        四捨五入後の数字
+    """
+    decimal_object = Decimal(str(number))
+    round_number = decimal_object.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    return float(round_number)
+
 def main():
     print("Welcome to Company Simulator!")
 
     # 1.必要な情報の入力
-    deck = inputNumber("デッキの枚数:")
+    deck_number = inputNumber("デッキの枚数:")
     hit_number = inputNumber("当たりの枚数:")
     open_number = inputNumber("めくる枚数:")
     upper_number = inputNumber("選べる上限枚数:")
+    # no hitの計算
+    nohit_number = deck_number - hit_number
 
     # 2.確率の計算
     probability_list = []
+    upper_probability = 1
     # 分母の計算
-    denominator = calcPermutation(deck, open_number)
-    # 0 to upper-1 の確率の計算
-    # {open}_C_{i} * ({hit}_P_{i} * {deck - hit}_P_{open - i} / {deck}_P_{open})
+    denominator = calcPermutation(deck_number, open_number)
+    # probability_i = {open}_C_{i} * ({hit}_P_{i} * {nohit}_P_{open - i} / {deck}_P_{open})
+    # probability_upper = 1 - Σprobability_i
     for hit_count in range(upper_number):
         combination = calcCombination(open_number, hit_count)
         hit_permutation = calcPermutation(hit_number, hit_count)
-        nonhit_permutation = calcPermutation(deck - hit_number, open_number - hit_count)
-        probability = combination * hit_permutation * nonhit_permutation / denominator
-        probability_list.append(probability)
+        nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
+        probability = combination * hit_permutation * nohit_permutation / denominator
+        upper_probability -= probability
+        probability_list.append(roundNumber(probability*100))
 
+    probability_list.append(roundNumber(upper_probability*100))
     print(probability_list)
 
 if __name__ == "__main__":
