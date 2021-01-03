@@ -95,14 +95,16 @@ def calcProbability(open_number, hit_number, nohit_number, hit_count, denominato
     probability = combination * hit_permutation * nohit_permutation / denominator
     return probability
 
-def roundNumber(number):
+def roundNumber(number, round_digits):
     """
-    小数第2位で四捨五入した値を返す
+    四捨五入した値を返す
 
     Parameters
     ----------
     number : int
         四捨五入対象の数字
+    round_digits : str
+        四捨五入する桁数の指定
 
     Returns
     -------
@@ -110,7 +112,7 @@ def roundNumber(number):
         四捨五入後の数字
     """
     decimal_object = Decimal(str(number))
-    round_number = decimal_object.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    round_number = decimal_object.quantize(Decimal(round_digits), rounding=ROUND_HALF_UP)
     return float(round_number)
 
 def main():
@@ -133,10 +135,20 @@ def main():
         probability = calcProbability(open_number, hit_number, nohit_number, hit_count, denominator)
         # probability_upper = 1 - Σprobability_i
         upper_probability -= probability
-        probability_list.append(roundNumber(probability*100))
+        probability_list.append(roundNumber(probability, '0.0001'))
+    probability_list.append(roundNumber(upper_probability, '0.0001'))
+    
+    print("--------------確率計算結果--------------")
 
-    probability_list.append(roundNumber(upper_probability*100))
-    print(probability_list)
+    # 3.当選確率の表示と期待値の計算
+    expectation = 0
+    for index, probability in enumerate(probability_list):
+        expectation += index * probability
+        if index != upper_number:
+            print("当たりが{}枚めくれる確率：{:.2f}%".format(index, probability*100))
+        else :
+            print("当たりが{}枚以上めくれる確率：{:.2f}%".format(index, probability*100))
+    print("当たりの期待値：{:.2f}".format(roundNumber(expectation, '0.01')))
 
 if __name__ == "__main__":
     main()
