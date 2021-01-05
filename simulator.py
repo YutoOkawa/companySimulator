@@ -1,5 +1,6 @@
 import math
 from decimal import Decimal, ROUND_HALF_UP
+from error import PermutationError, CombinationError, ProbabilityError
 
 def inputNumber(prompt):
     """
@@ -20,8 +21,7 @@ def inputNumber(prompt):
         try:
             number = int(input())
         except ValueError as err:
-            print("Error: ", end="")
-            print(err)
+            print("Error:", err)
             print("Retry input number.")
             continue
         break
@@ -43,7 +43,10 @@ def calcPermutation(n, r):
     permutation : int
         nPrの計算結果
     """
-    permutation = math.factorial(n) // math.factorial(n - r)
+    try:
+        permutation = math.factorial(n) // math.factorial(n - r)
+    except ValueError:
+        raise PermutationError("rがnの値を越えています.")
     return permutation
 
 def calcCombination(n, r):
@@ -62,7 +65,10 @@ def calcCombination(n, r):
     combination : int
         nCrの計算結果
     """
-    combination = calcPermutation(n, r) // math.factorial(r)
+    try:
+        combination = calcPermutation(n, r) // math.factorial(r)
+    except ValueError:
+        raise CombinationError("rがnの値を越えています．")
     return combination
 
 def calcProbability(open_number, hit_number, nohit_number, hit_count, denominator):
@@ -88,11 +94,15 @@ def calcProbability(open_number, hit_number, nohit_number, hit_count, denominato
     probability : float
         確率の計算結果
     """
-    
-    combination = calcCombination(open_number, hit_count)
-    hit_permutation = calcPermutation(hit_number, hit_count)
-    nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
-    probability = combination * hit_permutation * nohit_permutation / denominator
+    try:
+        combination = calcCombination(open_number, hit_count)
+        hit_permutation = calcPermutation(hit_number, hit_count)
+        nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
+        probability = combination * hit_permutation * nohit_permutation / denominator
+    except PermutationError:
+        raise ProbabilityError("確率の計算に失敗しました．")
+    except CombinationError:
+        raise ProbabilityError("確率の計算に失敗しました．")
     return probability
 
 def roundNumber(number, round_digits):
