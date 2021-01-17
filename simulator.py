@@ -46,7 +46,7 @@ def calcPermutation(n, r):
     try:
         permutation = math.factorial(n) // math.factorial(n - r)
     except ValueError:
-        raise PermutationError("rがnの値を越えています.")
+        raise PermutationError("")
     return permutation
 
 def calcCombination(n, r):
@@ -67,8 +67,8 @@ def calcCombination(n, r):
     """
     try:
         combination = calcPermutation(n, r) // math.factorial(r)
-    except ValueError:
-        raise CombinationError("rがnの値を越えています．")
+    except PermutationError:
+        raise CombinationError("")
     return combination
 
 def calcProbability(open_number, hit_number, nohit_number, hit_count, denominator):
@@ -94,15 +94,16 @@ def calcProbability(open_number, hit_number, nohit_number, hit_count, denominato
     probability : float
         確率の計算結果
     """
+    # TODO:エラー処理の充実
+    # 一つ一つエラーを分けて、どこでエラーが生じたかをわかるようにするか
+    # print出力が全て埋め込みとなるため、表記を考えたい
     try:
         combination = calcCombination(open_number, hit_count)
         hit_permutation = calcPermutation(hit_number, hit_count)
         nohit_permutation = calcPermutation(nohit_number, open_number - hit_count)
         probability = combination * hit_permutation * nohit_permutation / denominator
     except PermutationError:
-        raise ProbabilityError("確率の計算に失敗しました．")
-    except CombinationError:
-        raise ProbabilityError("確率の計算に失敗しました．")
+        raise ProbabilityError("")
     return probability
 
 def roundNumber(number, round_digits):
@@ -140,9 +141,16 @@ def main():
     probability_list = []
     upper_probability = 1
     # 分母の計算
-    denominator = calcPermutation(deck_number, open_number)
+    try:
+        denominator = calcPermutation(deck_number, open_number)
+    except PermutationError as err:
+        exit(-1)
     for hit_count in range(upper_number):
-        probability = calcProbability(open_number, hit_number, nohit_number, hit_count, denominator)
+        try:
+            probability = calcProbability(open_number, hit_number, nohit_number, hit_count, denominator)
+        except ProbabilityError as err:
+            print(err, "正しい数字を入力してください．")
+            exit(-1)
         # probability_upper = 1 - Σprobability_i
         upper_probability -= probability
         probability_list.append(roundNumber(probability, '0.0001'))
