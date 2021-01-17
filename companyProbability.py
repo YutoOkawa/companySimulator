@@ -1,7 +1,7 @@
-from error import PermutationError, CombinationError, ProbabilityError, ConstructorError
+from error import PermutationError, CombinationError, ProbabilityError, ConstructorError, CompanySimulatorError
 from mathUtil import calcPermutation, calcCombination, roundNumber
 
-class CompanyProbability:
+class CompanySimulator:
     """
     確率の計算を行うクラス
     """
@@ -105,21 +105,20 @@ class CompanyProbability:
         try:
             self.checkConstructor(deck, hit, look, upper)
         except ConstructorError:
-            raise ProbabilityError("入力が不正値です．")
+            raise CompanySimulatorError("入力が不正値です．")
 
+        # 複数回計算する値の計算
+        ## 当たりでないカードの計算
         nohit = deck - hit
-
-        probability_list = []
-        upper_probability = 1
-
-        # 分母の計算
+        ## 分母の計算
         try:
             denominator = calcPermutation(deck, look)
         except PermutationError:
-            raise ProbabilityError("denominator")
+            raise CompanySimulatorError("denominator")
 
+        probability_list = []
+        upper_probability = 1
         for hit_count in range(upper):
-            # 確率の計算
             probability = self.calcProbability(look, hit, nohit, hit_count, denominator)
             upper_probability = upper_probability - probability
             probability_list.append(roundNumber(probability, '0.0001'))

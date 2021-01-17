@@ -41,3 +41,14 @@ class ConstructorError(Exception):
 
     def __str__(self):
         return "入力値が不正です．" + self.msg
+
+class CompanySimulatorError(Exception):
+    """
+    CompanySimulatorクラスのメソッド実行が失敗した時に投げるエラー
+    """
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return "CompanySimulatorのメソッド実行が失敗しました．"
