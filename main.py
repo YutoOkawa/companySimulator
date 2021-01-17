@@ -1,4 +1,4 @@
-from companyProbability import CompanySimulator
+from companySimulator import CompanySimulator
 from error import CompanySimulatorError
 
 def inputNumber(prompt):
