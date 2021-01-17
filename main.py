@@ -28,6 +28,7 @@ def inputNumber(prompt):
 
 def main():
     print("Welcome to Company Simulator!")
+    company = CompanyProbability()
 
     while True:
         # 1.必要な情報の入力
@@ -36,18 +37,23 @@ def main():
         look = inputNumber("めくる枚数:")
         upper = inputNumber("選べる上限枚数:")
 
-        company = CompanyProbability()
-
         # companyProbabilityクラスで確率の計算
         try:
-            probability_list = company.calcProbability(deck, hit, look, upper)
+            probability_list = company.start(deck, hit, look, upper)
         except ProbabilityError as error:
             print(error, "再度入力してください．")
             continue
 
-        for probability in probability_list:
-            print(probability)
-        break
+        # companyProbabilityクラスで期待値の計算
+        expectation = company.calcExpectation(probability_list)
+
+        # 確率計算結果の表示
+        for index, probability in enumerate(probability_list):
+            if index != upper:
+                print("当たりが{}枚めくれる確率：{:.2f}%".format(index, probability*100))
+            else:
+                print("当たりが{}枚以上めくれる確率：{:.2f}%".format(index, probability*100))
+        print("当たりの期待値：{:.2f}".format(expectation))
 
 if __name__ == "__main__":
     main()

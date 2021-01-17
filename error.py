@@ -36,8 +36,8 @@ class ConstructorError(Exception):
     コンストラクターの条件が合わなかった時に投げるエラー
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, msg):
+        self.msg = msg
 
     def __str__(self):
-        return "入力値が不正です．"
+        return "入力値が不正です．" + self.msg

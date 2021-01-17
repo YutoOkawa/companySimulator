@@ -1,5 +1,5 @@
 from error import PermutationError, CombinationError, ProbabilityError, ConstructorError
-from mathUtil import calcPermutation, calcCombination
+from mathUtil import calcPermutation, calcCombination, roundNumber
 
 class CompanyProbability:
     """
@@ -15,16 +15,73 @@ class CompanyProbability:
         """
         # TODO:コンストラクタの条件チェック
         # deck < hit の場合などはエラー
-        if deck < hit:
-            raise ConstructorError()
+        if deck < 0 and hit < 0 and look < 0 and upper < 0:
+            raise ConstructorError("negative")
+        elif deck < hit:
+            raise ConstructorError("deck<hit")
         elif deck < look:
-            raise ConstructorError()
+            raise ConstructorError("deck<look")
         elif deck < upper:
-            raise ConstructorError()
+            raise ConstructorError("deck<upper")
         elif look < upper:
-            raise ConstructorError()
+            raise ConstructorError("look<upper")
 
-    def calcProbability(self, deck, hit, look, upper):
+    def calcProbability(self, look, hit, nohit, hit_count, denominator):
+        """
+        hit_count枚のあたりがめくれる確率を計算する
+        probability = {open}_C_{i} * ({hit}_P_{i} * {nohit}_P_{open - i} / {deck}_P_{open})
+
+        Parameters
+        ----------
+        look : int
+            めくるカードの枚数
+        hit : int
+            当たりカードの枚数
+        nohit : int
+            当たりじゃないカードの枚数
+        hit_count : int
+            当選する枚数
+        denominator : int
+            計算する確率の分母
+
+        Returns
+        -------
+        probability : float
+            確率の計算結果
+        """
+
+        try:
+            combination = calcCombination(look, hit_count)
+            hit_permutation = calcPermutation(hit, hit_count)
+            nohit_permutation = calcPermutation(nohit, look - hit_count)
+            probability = combination * hit_permutation * nohit_permutation / denominator
+        except PermutationError:
+            raise ProbabilityError("Permutation")
+        except CombinationError:
+            raise ProbabilityError("Combination")
+        return probability
+
+    def calcExpectation(self, probability_list):
+        """
+        当たりの期待値を計算する
+
+        Parameters
+        ----------
+        probability_list : list(float)
+            確率のリスト
+
+        Returns
+        -------
+        expectation : float
+            期待値
+        """
+        expectation = 0
+        for index, probability in enumerate(probability_list):
+            expectation += index * probability
+        expectation = roundNumber(expectation, '0.01')
+        return expectation
+
+    def start(self, deck, hit, look, upper):
         """
         probability = {open}_C_{i} * ({hit}_P_{i} * {nohit}_P_{open - i} / {deck}_P_{open})
 
@@ -63,18 +120,9 @@ class CompanyProbability:
 
         for hit_count in range(upper):
             # 確率の計算
-            try:
-                combination = calcCombination(look, hit_count)
-                hit_permutation = calcPermutation(hit, hit_count)
-                nohit_permutation = calcPermutation(nohit, look - hit_count)
-                probability = combination * hit_permutation * nohit_permutation / denominator
-            except PermutationError:
-                raise ProbabilityError("Permutation")
-            except CombinationError:
-                raise ProbabilityError("Combination")
-
-            probability_list.append(probability)
+            probability = self.calcProbability(look, hit, nohit, hit_count, denominator)
             upper_probability = upper_probability - probability
+            probability_list.append(roundNumber(probability, '0.0001'))
 
-        probability_list.append(upper_probability)
+        probability_list.append(roundNumber(upper_probability, '0.0001'))
         return probability_list
