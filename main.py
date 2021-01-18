@@ -56,15 +56,13 @@ def main():
         look = inputNumber("めくる枚数:")
         upper = inputNumber("選べる上限枚数:")
 
-        # companyProbabilityクラスで確率の計算
+        # companyProbabilityクラスで確率と期待値の計算
         try:
             probability_list = simulator.start(deck, hit, look, upper)
+            expectation = simulator.calcExpectation(probability_list)
         except CompanySimulatorError as error:
             print(error, "再度入力してください．")
             continue
-
-        # companyProbabilityクラスで期待値の計算
-        expectation = simulator.calcExpectation(probability_list)
 
         # 確率計算結果の表示
         for index, probability in enumerate(probability_list):

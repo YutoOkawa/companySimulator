@@ -87,8 +87,11 @@ class CompanySimulator:
             期待値
         """
         expectation = 0
-        for index, probability in enumerate(probability_list):
-            expectation += index * probability
+        try:
+            for index, probability in enumerate(probability_list):
+                expectation += index * probability
+        except TypeError:
+            raise CompanySimulatorError("期待値の計算に失敗しました．")
         expectation = roundNumber(expectation, '0.01')
         return expectation
 
