@@ -24,6 +24,9 @@ def calcPermutation(n, r):
         permutation = math.factorial(n) // math.factorial(n - r)
     except ValueError:
         raise PermutationError("factorial")
+    
+    if permutation == 0:
+        raise PermutationError("Zero")
     return permutation
 
 def calcCombination(n, r):
