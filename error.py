@@ -31,9 +31,9 @@ class ProbabilityError(Exception):
     def __str__(self):
         return "確率の計算に失敗しました．" + self.msg
 
-class ConstructorError(Exception):
+class ArgumentError(Exception):
     """
-    コンストラクターの条件が合わなかった時に投げるエラー
+    引数の条件が合わなかった時に投げるエラー
     """
 
     def __init__(self, msg):
@@ -51,4 +51,4 @@ class CompanySimulatorError(Exception):
         self.msg = msg
 
     def __str__(self):
-        return "CompanySimulatorのメソッド実行が失敗しました．"
+        return "Simulator実行に失敗しました．" + self.msg

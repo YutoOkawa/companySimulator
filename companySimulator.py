@@ -1,4 +1,4 @@
-from error import PermutationError, CombinationError, ProbabilityError, ConstructorError, CompanySimulatorError
+from error import PermutationError, CombinationError, ProbabilityError, ArgumentError, CompanySimulatorError
 from mathUtil import calcPermutation, calcCombination, roundNumber
 
 class CompanySimulator:
@@ -9,10 +9,10 @@ class CompanySimulator:
     def __init__(self):
         pass
 
-    def checkConstructor(self, deck, hit, look, upper):
+    def checkArgument(self, deck, hit, look, upper):
         """
         deck>hit, deck>look, deck>upper, look>upperであるかをチェックする
-        不正値であれば、ConstructorErrorが発生する
+        不正値であれば、ArgumentErrorが発生する
 
         Parameters
         ----------
@@ -27,15 +27,15 @@ class CompanySimulator:
         """
         # deck < hit の場合などはエラー
         if deck < 0 and hit < 0 and look < 0 and upper < 0:
-            raise ConstructorError("negative")
+            raise ArgumentError("negative number.")
         elif deck < hit:
-            raise ConstructorError("deck<hit")
+            raise ArgumentError("deck < hit")
         elif deck < look:
-            raise ConstructorError("deck<look")
+            raise ArgumentError("deck < look")
         elif deck < upper:
-            raise ConstructorError("deck<upper")
+            raise ArgumentError("deck < upper")
         elif look < upper:
-            raise ConstructorError("look<upper")
+            raise ArgumentError("look < upper")
 
     def calcProbability(self, look, hit, nohit, hit_count, denominator):
         """
@@ -117,8 +117,8 @@ class CompanySimulator:
         """
 
         try:
-            self.checkConstructor(deck, hit, look, upper)
-        except ConstructorError:
+            self.checkArgument(deck, hit, look, upper)
+        except ArgumentError:
             raise CompanySimulatorError("入力が不正値です．")
 
         # 複数回計算する値の計算
