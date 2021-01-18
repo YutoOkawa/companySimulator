@@ -26,7 +26,7 @@ def calcPermutation(n, r):
         raise PermutationError("factorial")
     
     if permutation == 0:
-        raise PermutationError("Zero")
+        raise PermutationError("Zero Case")
     return permutation
 
 def calcCombination(n, r):
