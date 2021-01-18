@@ -28,6 +28,17 @@ def inputNumber(prompt):
 
 def inputString(prompt):
     """
+    文字の入力を促し、その文字を返す
+
+    Parameters
+    ----------
+    prompt : str
+        入力時に出力するprompt
+
+    Returns
+    -------
+    string: str
+        入力された文字
     """
     while True:
         print(prompt, end="")

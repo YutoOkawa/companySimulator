@@ -12,8 +12,19 @@ class CompanySimulator:
     def checkConstructor(self, deck, hit, look, upper):
         """
         deck>hit, deck>look, deck>upper, look>upperであるかをチェックする
+        不正値であれば、ConstructorErrorが発生する
+
+        Parameters
+        ----------
+        deck : int
+            デッキの枚数
+        hit : int
+            当たりの枚数
+        look : int
+            めくる枚数
+        upper : int
+            選べる上限枚数
         """
-        # TODO:コンストラクタの条件チェック
         # deck < hit の場合などはエラー
         if deck < 0 and hit < 0 and look < 0 and upper < 0:
             raise ConstructorError("negative")
@@ -108,18 +119,19 @@ class CompanySimulator:
             raise CompanySimulatorError("入力が不正値です．")
 
         # 複数回計算する値の計算
-        ## 当たりでないカードの計算
         nohit = deck - hit
-        ## 分母の計算
         try:
             denominator = calcPermutation(deck, look)
         except PermutationError:
-            raise CompanySimulatorError("denominator")
+            raise CompanySimulatorError("分母の計算に失敗しました．")
 
         probability_list = []
         upper_probability = 1
         for hit_count in range(upper):
-            probability = self.calcProbability(look, hit, nohit, hit_count, denominator)
+            try:
+                probability = self.calcProbability(look, hit, nohit, hit_count, denominator)
+            except ProbabilityError:
+                raise CompanySimulatorError("確率の計算に失敗しました．")
             upper_probability = upper_probability - probability
             probability_list.append(roundNumber(probability, '0.0001'))
 
