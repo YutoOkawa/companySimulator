@@ -66,19 +66,19 @@ def main():
 
         # 確率計算結果の表示
         for index, probability in enumerate(probability_list):
-            if index != upper:
-                print("当たりが{}枚めくれる確率：{:.2f}%".format(index, probability*100))
-            else:
+            if index == upper and look > upper:
                 print("当たりが{}枚以上めくれる確率：{:.2f}%".format(index, probability*100))
+            else:
+                print("当たりが{}枚めくれる確率：{:.2f}%".format(index, probability*100))
         print("当たりの期待値：{:.2f}".format(expectation))
 
         # プログラム終了判定
         while True:
-            check = inputString("simulatorを終了しますか？(y/N)")
+            check = inputString("simulatorを続けますか？(y/N):")
             check = check.lower()
-            if check == "y":
+            if check == "n":
                 exit(0)
-            elif check == "n":
+            elif check == "y":
                 break
             else:
                 print("Retry input.")
