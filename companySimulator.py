@@ -26,7 +26,7 @@ class CompanySimulator:
             選べる上限枚数
         """
         # deck < hit の場合などはエラー
-        if deck < 0 and hit < 0 and look < 0 and upper < 0:
+        if deck < 0 or hit < 0 or look < 0 or upper < 0:
             raise ArgumentError("negative number.")
         elif deck < hit:
             raise ArgumentError("deck < hit")
@@ -70,6 +70,8 @@ class CompanySimulator:
             raise ProbabilityError("Permutation")
         except CombinationError:
             raise ProbabilityError("Combination")
+        except ZeroDivisionError:
+            raise ProbabilityError("denominator")
         return probability
 
     def calcExpectation(self, probability_list):

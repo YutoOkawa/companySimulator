@@ -6,7 +6,7 @@ def calcPermutation(n, r):
     """
     順列(nPr)を計算する
 
-    n<0, n<rの場合にPermutationErrorが発生する．
+    n<0, r<0, n<rの場合にPermutationErrorが発生する．
 
     Parameters
     ----------
@@ -23,7 +23,7 @@ def calcPermutation(n, r):
     try:
         permutation = math.factorial(n) // math.factorial(n - r)
     except ValueError:
-        raise PermutationError("")
+        raise PermutationError("factorial")
     return permutation
 
 def calcCombination(n, r):
