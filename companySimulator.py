@@ -133,6 +133,8 @@ class CompanySimulator:
         probability_list = []
         upper_probability = 1
         for hit_count in range(upper):
+            if hit_count == hit: #当たり枚数を超える場合
+                break
             try:
                 probability = self.calcProbability(look, hit, nohit, hit_count, denominator)
             except ProbabilityError:
